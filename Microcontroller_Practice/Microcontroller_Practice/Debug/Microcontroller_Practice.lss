@@ -3,29 +3,29 @@ Microcontroller_Practice.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  00000182  2**0
+  0 .data         00000000  00800100  00800100  0000011e  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000012e  00000000  00000000  00000054  2**1
+  1 .text         000000ca  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  00000182  2**0
+  2 .comment      00000030  00000000  00000000  0000011e  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000001b4  2**2
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000150  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000028  00000000  00000000  000001f4  2**0
+  4 .debug_aranges 00000020  00000000  00000000  00000190  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000882  00000000  00000000  0000021c  2**0
+  5 .debug_info   000008a0  00000000  00000000  000001b0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000007c3  00000000  00000000  00000a9e  2**0
+  6 .debug_abbrev 000007ef  00000000  00000000  00000a50  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000023d  00000000  00000000  00001261  2**0
+  7 .debug_line   00000290  00000000  00000000  0000123f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000044  00000000  00000000  000014a0  2**2
+  8 .debug_frame  00000024  00000000  00000000  000014d0  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000408  00000000  00000000  000014e4  2**0
+  9 .debug_str    00000449  00000000  00000000  000014f4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000048  00000000  00000000  000018ec  2**0
+ 10 .debug_loc    00000067  00000000  00000000  0000193d  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000018  00000000  00000000  00001934  2**0
+ 11 .debug_ranges 00000010  00000000  00000000  000019a4  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -109,124 +109,69 @@ Disassembly of section .text:
   92:	d0 e1       	ldi	r29, 0x10	; 16
   94:	de bf       	out	0x3e, r29	; 62
   96:	cd bf       	out	0x3d, r28	; 61
-  98:	3c d0       	rcall	.+120    	; 0x112 <main>
-  9a:	47 c0       	rjmp	.+142    	; 0x12a <_exit>
+  98:	02 d0       	rcall	.+4      	; 0x9e <main>
+  9a:	15 c0       	rjmp	.+42     	; 0xc6 <_exit>
 
 0000009c <__bad_interrupt>:
   9c:	b1 cf       	rjmp	.-158    	; 0x0 <__vectors>
 
-0000009e <_Z5delayi>:
-		PORTA = 0x00;
-		delay(1);
-	}
-}
-
-void delay(int sec){
-  9e:	cf 93       	push	r28
-  a0:	df 93       	push	r29
-  a2:	00 d0       	rcall	.+0      	; 0xa4 <_Z5delayi+0x6>
-  a4:	00 d0       	rcall	.+0      	; 0xa6 <_Z5delayi+0x8>
-  a6:	00 d0       	rcall	.+0      	; 0xa8 <_Z5delayi+0xa>
-  a8:	cd b7       	in	r28, 0x3d	; 61
-  aa:	de b7       	in	r29, 0x3e	; 62
-	volatile int i, j, k;
-	for (i = 0; i < sec; i++)
-  ac:	1a 82       	std	Y+2, r1	; 0x02
-  ae:	19 82       	std	Y+1, r1	; 0x01
-  b0:	29 81       	ldd	r18, Y+1	; 0x01
-  b2:	3a 81       	ldd	r19, Y+2	; 0x02
-  b4:	28 17       	cp	r18, r24
-  b6:	39 07       	cpc	r19, r25
-  b8:	1c f5       	brge	.+70     	; 0x100 <_Z5delayi+0x62>
-	for (j = 0; j < 1000; j++)
-  ba:	1c 82       	std	Y+4, r1	; 0x04
-  bc:	1b 82       	std	Y+3, r1	; 0x03
-  be:	2b 81       	ldd	r18, Y+3	; 0x03
-  c0:	3c 81       	ldd	r19, Y+4	; 0x04
-  c2:	28 3e       	cpi	r18, 0xE8	; 232
-  c4:	33 40       	sbci	r19, 0x03	; 3
-  c6:	ac f4       	brge	.+42     	; 0xf2 <_Z5delayi+0x54>
-	for (k = 0; k < 1000; k++);
-  c8:	1e 82       	std	Y+6, r1	; 0x06
-  ca:	1d 82       	std	Y+5, r1	; 0x05
-  cc:	2d 81       	ldd	r18, Y+5	; 0x05
-  ce:	3e 81       	ldd	r19, Y+6	; 0x06
-  d0:	28 3e       	cpi	r18, 0xE8	; 232
-  d2:	33 40       	sbci	r19, 0x03	; 3
-  d4:	3c f4       	brge	.+14     	; 0xe4 <_Z5delayi+0x46>
-  d6:	2d 81       	ldd	r18, Y+5	; 0x05
-  d8:	3e 81       	ldd	r19, Y+6	; 0x06
-  da:	2f 5f       	subi	r18, 0xFF	; 255
-  dc:	3f 4f       	sbci	r19, 0xFF	; 255
-  de:	3e 83       	std	Y+6, r19	; 0x06
-  e0:	2d 83       	std	Y+5, r18	; 0x05
-  e2:	f4 cf       	rjmp	.-24     	; 0xcc <_Z5delayi+0x2e>
-}
-
-void delay(int sec){
-	volatile int i, j, k;
-	for (i = 0; i < sec; i++)
-	for (j = 0; j < 1000; j++)
-  e4:	2b 81       	ldd	r18, Y+3	; 0x03
-  e6:	3c 81       	ldd	r19, Y+4	; 0x04
-  e8:	2f 5f       	subi	r18, 0xFF	; 255
-  ea:	3f 4f       	sbci	r19, 0xFF	; 255
-  ec:	3c 83       	std	Y+4, r19	; 0x04
-  ee:	2b 83       	std	Y+3, r18	; 0x03
-  f0:	e6 cf       	rjmp	.-52     	; 0xbe <_Z5delayi+0x20>
-	}
-}
-
-void delay(int sec){
-	volatile int i, j, k;
-	for (i = 0; i < sec; i++)
-  f2:	29 81       	ldd	r18, Y+1	; 0x01
-  f4:	3a 81       	ldd	r19, Y+2	; 0x02
-  f6:	2f 5f       	subi	r18, 0xFF	; 255
-  f8:	3f 4f       	sbci	r19, 0xFF	; 255
-  fa:	3a 83       	std	Y+2, r19	; 0x02
-  fc:	29 83       	std	Y+1, r18	; 0x01
-  fe:	d8 cf       	rjmp	.-80     	; 0xb0 <_Z5delayi+0x12>
-	for (j = 0; j < 1000; j++)
-	for (k = 0; k < 1000; k++);
-}
- 100:	26 96       	adiw	r28, 0x06	; 6
- 102:	0f b6       	in	r0, 0x3f	; 63
- 104:	f8 94       	cli
- 106:	de bf       	out	0x3e, r29	; 62
- 108:	0f be       	out	0x3f, r0	; 63
- 10a:	cd bf       	out	0x3d, r28	; 61
- 10c:	df 91       	pop	r29
- 10e:	cf 91       	pop	r28
- 110:	08 95       	ret
-
-00000112 <main>:
-
-#include <avr/io.h>
-void delay(int sec);
+0000009e <main>:
+#define F_CPU 16000000UL
+#include <util/delay.h>
 
 int main(){
-	DDRA = 0x01;
- 112:	81 e0       	ldi	r24, 0x01	; 1
- 114:	8a bb       	out	0x1a, r24	; 26
+	unsigned char count = 0;
+	DDRA = 0x0F;
+  9e:	8f e0       	ldi	r24, 0x0F	; 15
+  a0:	8a bb       	out	0x1a, r24	; 26
+	DDRB = 0X00;
+  a2:	17 ba       	out	0x17, r1	; 23
+#include <avr/io.h>
+#define F_CPU 16000000UL
+#include <util/delay.h>
+
+int main(){
+	unsigned char count = 0;
+  a4:	90 e0       	ldi	r25, 0x00	; 0
+	DDRA = 0x0F;
+	DDRB = 0X00;
 	while(1){
-		PORTA = 0x01;
- 116:	81 e0       	ldi	r24, 0x01	; 1
- 118:	8b bb       	out	0x1b, r24	; 27
-		delay(1);
- 11a:	81 e0       	ldi	r24, 0x01	; 1
- 11c:	90 e0       	ldi	r25, 0x00	; 0
- 11e:	bf df       	rcall	.-130    	; 0x9e <_Z5delayi>
-		PORTA = 0x00;
- 120:	1b ba       	out	0x1b, r1	; 27
-		delay(1);
- 122:	81 e0       	ldi	r24, 0x01	; 1
- 124:	90 e0       	ldi	r25, 0x00	; 0
- 126:	bb df       	rcall	.-138    	; 0x9e <_Z5delayi>
- 128:	f6 cf       	rjmp	.-20     	; 0x116 <main+0x4>
+		if ((PINB & 0x01) == 0x00){ // 풀업모드임을 인지. 4비트만 확인. 5V를 연결하지 않은 경우 플로팅 현상으로 인해 스위치를 누르지 않아도 LED가 켜져 있는듯
+  a6:	b0 99       	sbic	0x16, 0	; 22
+  a8:	0a c0       	rjmp	.+20     	; 0xbe <main+0x20>
+			count++;
+  aa:	9f 5f       	subi	r25, 0xFF	; 255
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
 
-0000012a <_exit>:
- 12a:	f8 94       	cli
+	__builtin_avr_delay_cycles(__ticks_dc);
+  ac:	2f ef       	ldi	r18, 0xFF	; 255
+  ae:	30 e7       	ldi	r19, 0x70	; 112
+  b0:	82 e0       	ldi	r24, 0x02	; 2
+  b2:	21 50       	subi	r18, 0x01	; 1
+  b4:	30 40       	sbci	r19, 0x00	; 0
+  b6:	80 40       	sbci	r24, 0x00	; 0
+  b8:	e1 f7       	brne	.-8      	; 0xb2 <main+0x14>
+  ba:	00 c0       	rjmp	.+0      	; 0xbc <main+0x1e>
+  bc:	00 00       	nop
+			_delay_ms(50);
+		}
+		PORTA = count & 0x0F;
+  be:	89 2f       	mov	r24, r25
+  c0:	8f 70       	andi	r24, 0x0F	; 15
+  c2:	8b bb       	out	0x1b, r24	; 27
 
-0000012c <__stop_program>:
- 12c:	ff cf       	rjmp	.-2      	; 0x12c <__stop_program>
+int main(){
+	unsigned char count = 0;
+	DDRA = 0x0F;
+	DDRB = 0X00;
+	while(1){
+  c4:	f0 cf       	rjmp	.-32     	; 0xa6 <main+0x8>
+
+000000c6 <_exit>:
+  c6:	f8 94       	cli
+
+000000c8 <__stop_program>:
+  c8:	ff cf       	rjmp	.-2      	; 0xc8 <__stop_program>
