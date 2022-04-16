@@ -8,6 +8,8 @@
 // ● GPIO - LED
 	// 2. LED 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// LED 1개 켜기 + delay
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include <avr/io.h>
 void delay(int sec);
@@ -31,6 +33,8 @@ void delay(int sec){
 	}
 }
 */
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// LED 4비트 켜기 - 1개씩
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include <avr/io.h>
@@ -57,6 +61,8 @@ void delay(int sec){
 	}
 }
 */
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// LED 4비트 켜기 - level
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include <avr/io.h>
@@ -89,12 +95,14 @@ void delay(int sec){
 // ● GPIO - Switch
 	// 2. Switch 실습
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// LED 모두 켜기 basic1 by Switch
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include <avr/io.h>
 
 int main(){
 	DDRA = 0x0F; // 4비트 출력모드
-	DDRB = 0x00; // 0비트 입력모드 ♣♣♣
+	DDRB = 0x00; // 4비트 입력모드
 	while(1){
 		if((PINB & 0x01) == 0x00) // 풀업모드임을 인지. 4비트만 확인. 5V를 연결하지 않은 경우 플로팅 현상으로 인해 스위치를 누르지 않아도 LED가 켜져 있는듯
 			PORTA = 0x0F; // 4비트 출력 ON
@@ -104,7 +112,9 @@ int main(){
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-/* // ♣♣♣
+// LED 모두 켜기 basic2 by Switch
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
 #include <avr/io.h>
 
 int main(){
@@ -120,6 +130,8 @@ int main(){
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// LED 4비트 2진count by Switch
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include <avr/io.h>
 void delay(int sec);
@@ -131,7 +143,7 @@ int main(){
 	while(1){
 		if((PINB & 0x01) == 0x00){ // 풀업모드임을 인지. 4비트만 확인. 5V를 연결하지 않은 경우 플로팅 현상으로 인해 스위치를 누르지 않아도 LED가 켜져 있는듯
 			count++;
-			delay(1);
+			delay(1); // delay(1)이 없다면 switch 읽을 때, 여러번 클릭되서 난리남 ♣
 		}
 		PORTA = count & 0x0F; // 4비트 출력 지정 + 나머지 기존 비트 유지
 	}
@@ -146,6 +158,8 @@ void delay(int sec){
 	}
 }
 */
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// LED 4비트 level변화 by Switch
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include <avr/io.h>
@@ -186,6 +200,8 @@ void delay(int sec){
 	}
 }
 */
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// LED 4비트 2진count _delay_ms by Switch
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include <avr/io.h>
