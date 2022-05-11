@@ -821,21 +821,20 @@ void disp_digit(unsigned char num, unsigned char d) {
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-
-
-// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 // 타이머에 따른 LED PWM 조절
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include <avr/io.h>
 #define F_CPU 16000000UL
 #include <util/delay.h>
-#define TC0_FAST_PWM (1<<WGM00 | 1<<WGM01)
-#define TC0_NONIVERT_PWM (1<<COM01)
-#define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)
+#define TC0_FAST_PWM (1<<WGM00 | 1<<WGM01)		// 웨이브 제너레이션 모드 : 고속 PWM 모드 ♣
+#define TC0_NONIVERT_PWM (1<<COM01)				// 비교 출력 모드 of 고속 PWM 모드 : OC0핀을 BOTTOM에서 셋 / TCNT0 == OCR0면 클리어 ♣
+#define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)		// pre-scale : 32비트 ♣
+
 void disp_FND(unsigned char num);
 void initialize(void);
 void disp_digit(unsigned char num, unsigned char d);
+
 unsigned char digit[10] = {0x88, 0XBE, 0xC4, 0xA4, 0xB2, 0xA1, 0x83, 0xBC, 0x80, 0xB0};
 	
 int main(void) {
@@ -868,7 +867,7 @@ void disp_digit(unsigned char num, unsigned char d){
 	PORTF = 1<<d;
 }
 void initialize(){
-	DDRB=0x10; // DDRB |=1<<PORTB4
+	DDRB=0x10;	// DDRB |=1<<PORTB4
 	DDRC=0xFF;
 	DDRF=0x0F;
 	TCCR0 |= TC0_FAST_PWM | TC0_NONIVERT_PWM | TC0_PRESCALE_32;

@@ -473,28 +473,46 @@
 		(1) 일반 모드
 			- 주기 : 외부 펄스 입력 -> BOTTOM ~ MAX 주기 단순 업카운트
 			- 리셋 : 중간에서 자동리셋x
-		(2) CTC(Clear Time on Compare Match) 모드
-			- 주기 : OCR 이용하여 원하는 주기 interrupt 발생
-			- 리셋 : 중간에서 TCNT0 == OCR0되면 0으로 clear. OCn 출력도 가능
-		(3) 고속 PWM 모드
-			- 고속 PWM 파형 발생
-			- 주기 : BOTTOM ~ MAX로 count 진행
-			- 변화 : 중간에서 TCNT0 == OCR0되면 OCn 출력 변화
-		(4) 위상정정 PWM 모드
+		(2) 위상정정 PWM 모드
 			- 단점 : 고속 PWM보다 느림
 			- 장점 : 업다운 카운터 동작 -> 분해능 2배. 위상 유지 good
 			- 변화 : 중간에서 TCNTn == OCRn되면 OCn 출력 변화
+		(3) CTC(Clear Time on Compare Match) 모드
+			- 주기 : OCR 이용하여 원하는 주기 interrupt 발생
+			- 리셋 : 중간에서 TCNT0 == OCR0되면 0으로 clear. OCn 출력도 가능
+		(4) 고속 PWM 모드
+			- 고속 PWM 파형 발생
+			- 주기 : BOTTOM ~ MAX로 count 진행
+			- 변화 : 중간에서 TCNT0 == OCR0되면 OCn 출력 변화
+
 	4) Counter Pin ♣♣
 		(1) I/O Pin 레지스터
 			OC0 = PORTB4
 		(2) 제어 레지스터
-			TCCR0 : 7 = FOC0, 6 = WGM00, 5 = COM1, 4 = COM00, 3 = WGM01, 2 = CS02, 1 = CS01, 0 = CS00
+			TCCR0 : 7 = FOC0, 6 = WGM00, 5 = COM01, 4 = COM00, 3 = WGM01, 2 = CS02, 1 = CS01, 0 = CS00
 			1] pre-scale : 16MHz가 너무 빨라서 느리게 만듦
 				CS02 CS01 CS00 : 001 = 1, 010 = 8, 011 = 32, 100 = 64, 101 = 128, 110 = 256, 111 = 1024
+				
+				[1] pre-scaler 사용x
+					- 짧은 주기
+					- 세부 control 가능 but 전자기파 증가
+				[2] pre-scaler 사용o
+					- 긴 주기
+					- 세부 control 불가능 but 전자기파 감소
 			2] 웨이브 제너레이션 모드
 				WGM01 WGM00 : 00 = 일반 모드, 01 = 위상정정 PWM 모드, 10 = CTC 모드, 11 = 고속 PWM 모드
 			3] 비교출력 모드
 				COM01 COM00 : 00 = 사용 안함, 01 = 반전, 10 = 클리어, 11 = 셋
+				
+				[2] 위상정정 PWM
+					COM01 COM00 : 00 = 사용 안함, 01 = 예약, 
+									10 = 카운트 업 중에 TCNT0 == OCR0면 OC0핀 클리어 / 카운트 다운 중에 TCNT0 == OCR0면 CO0핀 셋
+									11 = 카운트 업 중에 TCNT0 == OCR0면 OC0핀 셋 / 카운트 다운 중에 TCNT0 == OCR면 OC0핀 셋(이게 맞나??? 클리어 아닌가???)
+				[4] 고속 PWM
+					COM01 COM00 : 00 = 사용 안함, 01 = 예약, 
+									10 = OC0핀을 BOTTOM에서 셋 / TCNT0 == OCR0면 OC0핀 클리어
+									11 = OC0핀을 BOTTOM에서 클리어 / TCNT0 == OCR0면 OC0핀 셋
+									
 			ex. 64 pre-scale의 주기
 				1/16M x 64 = 4 x 10^-6 = 4us
 		(3) Interrupt 마스크 레지스터
@@ -515,7 +533,7 @@
 				ISR(TIMER0_COMP_vect){
 					~~~
 				}
-	뒷부분은 대면 강의시간에 안함. 뒷부분도 해야되나? ♣♣♣
+		// 뒷부분은 대면 강의시간에 안함. 뒷부분도 해야되나? ♣♣♣
 	+a)
 		1) 상태도
 			(1) 개념
