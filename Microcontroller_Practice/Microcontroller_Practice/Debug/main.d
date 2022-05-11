@@ -10,9 +10,7 @@ main.d main.o: .././main.cpp \
  c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h \
- c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
- c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h
+ c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h
 
 c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -36,8 +34,4 @@ c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\a
 
 c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
-c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h:
-
-c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h:
-
-c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h:
+c:\bang\ program\ file\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:

@@ -385,6 +385,149 @@
 			5] target 설정 : 상단 Tools >> Add Target >> Tool : STK500, Serial Port : 해당COM
 			6] Device Programming : 상단 Tools >> Device Programming >> SKT500, ATmega128A, ISP >> Apply 클릭
 				>> Memories >> Flash 설정 >> Program 클릭
+	
+
+● Interrupt & Polling ♣♣
+	1) 개념 : 외부 장치 상태 변화 감지 in 프로그램
+	2) 방법
+		(1) Polling : 각 장치의 상태 체크 by 주기적
+			1] 상태 감지 방법
+				[1] 레벨 감지 : High/Low 감지
+				[2] 에지 감지
+					[[1]] 상승 에지 : 0 -> 1
+					[[2]] 하강 에지 : 1 -> 0
+			2] 상태 감지 코드
+				[1] 레벨 감지
+					while(!(장치값 == 지정값))						// 장치값과 지정값이 다르면 계속 탐색
+				[2] 에지 감지
+					1]] 상승 에지
+						Do {
+							prev = now;
+						} while(!((now == 1) && (prev == 0)));		// prev = 0, now = 1이 아니면 계속 탐색
+					2]] 하강 에지
+						Do {
+							prev = now;
+						} while(!((now == 0) && (prev == 1)));		// prev = 1, now = 0이 아니면 계속 탐색
+		(2) Interrupt : 시점을 알 수 없는 상태 변화 체크 by 하드웨어적
+			1] Atmega128 Interrupt Pin ♣
+				- 총 : 35개
+				- 외부 장치 : 8개
+				- 타이머 : 14개
+				- 통신 : 8개
+			2] Interrupt 처리 순서 ♣
+				[0-1] 장치 활성화 by 레지스터
+				[0-2] 개별 장치 인터럽트 설정 by 레지스터
+				[0-3] 전역 인터럽트 활성화 by 레지스터
+				[1] 이벤트 발생 : main 코드 중단, ISR 실행
+				[2] ISR 실행 완료 : main 코드 이어서 실행
+			3] Interrupt 활성화
+				[1] 장치 활성화 by 레지스터
+				[2] 개별 장치 인터럽트 설정 by 레지스터
+				[3] 전역 인터럽트 활성화 by 레지스터
+			4] 구현 by ISR(Interrupt Service Routine) ♣
+				- Interrupt 발생 시 처리해야할 코드 정의하는 함수
+				
+				void ISR(인터럽트_벡터명){
+					~~~
+				}
+			5] 외부 Interrupt Pin ♣
+				- 8개 외부 Interrupt 사용 가능
+				
+				[1] I/O Pin 레지스터
+					1]] INT0 ~ INT3 : PORTD0~3
+					2]] INT4 ~ INT7 : PORTE4~7
+				[2] 제어 레지스터
+					1]] EICRA : 7 = ISC31, 6 = ISC30, 5 = ISC21, 4 = ISC20, 3 = ISC11, 2 = ISC10, 1 = ISC01, 0 = ISC00
+					2]] EICRB : 7 = ISC71, 6 = ISC70, 5 = ISC61, 4 = ISC60, 3 = ISC51, 2 = ISC50, 1 = ISC41, 0 = ISC40
+					
+					- 00 : 레벨
+					- 10 : 하강 에지
+					- 11 : 상승 에지
+					ex. ISC01 ISC00 : 하강 에지
+				[3] 마스크 레지스터
+					EIMSK : 7 = INT7, 6 = INT6, 5 = INT5, 4 = INT4, 3 = INT3, 2 = INT2, 1 = INT1, 0 = INT0
+					- 0 ~ 7비트
+					- 1 : 활성화
+					- 0 : 비활성화
+				[4] 전역 Interrupt 활성화
+					1]] 함수 호출 way : sei();
+					2]] 레지스터 way : SREG |= I<<1; 
+				[5] Interrupt 벡터
+					ISR(INTn_vect){
+						~~~
+					}
+				
+					- n : 0 ~ 7
+					
+● Timer & Counter ♣♣
+	1) Timer / Counter 개수 ♣
+		- 총 : 4개
+		- 8비트 : 2개 T/C0, T/C2
+			BOTTOM ~ TOP : 0 ~ 255
+		- 16비트 : 2개 T/C1, T/C3
+			BOTTOM ~ TOP : 0 ~ 65535
+	2) 동작 방식 ♣♣
+		(1) 동기식 : 내부클럭 -> pre-scaler -> 업카운트 -> [CVF : 타이머값 overflow] or [Comp : 타이머값 OCR(Output Compare Register) 도달] 
+		(2) 비동기식 : 외부클럭 -> 업카운트 -> [CVF : 타이머값 overflow] or [Comp : 타이머값 OCR(Output Compare Register) 도달] 
+	3) Timer / Counter 모드 ♣♣
+		(1) 일반 모드
+			- 주기 : 외부 펄스 입력 -> BOTTOM ~ MAX 주기 단순 업카운트
+			- 리셋 : 중간에서 자동리셋x
+		(2) CTC(Clear Time on Compare Match) 모드
+			- 주기 : OCR 이용하여 원하는 주기 interrupt 발생
+			- 리셋 : 중간에서 TCNT0 == OCR0되면 0으로 clear. OCn 출력도 가능
+		(3) 고속 PWM 모드
+			- 고속 PWM 파형 발생
+			- 주기 : BOTTOM ~ MAX로 count 진행
+			- 변화 : 중간에서 TCNT0 == OCR0되면 OCn 출력 변화
+		(4) 위상정정 PWM 모드
+			- 단점 : 고속 PWM보다 느림
+			- 장점 : 업다운 카운터 동작 -> 분해능 2배. 위상 유지 good
+			- 변화 : 중간에서 TCNTn == OCRn되면 OCn 출력 변화
+	4) Counter Pin ♣♣
+		(1) I/O Pin 레지스터
+			OC0 = PORTB4
+		(2) 제어 레지스터
+			TCCR0 : 7 = FOC0, 6 = WGM00, 5 = COM1, 4 = COM00, 3 = WGM01, 2 = CS02, 1 = CS01, 0 = CS00
+			1] pre-scale : 16MHz가 너무 빨라서 느리게 만듦
+				CS02 CS01 CS00 : 001 = 1, 010 = 8, 011 = 32, 100 = 64, 101 = 128, 110 = 256, 111 = 1024
+			2] 웨이브 제너레이션 모드
+				WGM01 WGM00 : 00 = 일반 모드, 01 = 위상정정 PWM 모드, 10 = CTC 모드, 11 = 고속 PWM 모드
+			3] 비교출력 모드
+				COM01 COM00 : 00 = 사용 안함, 01 = 반전, 10 = 클리어, 11 = 셋
+			ex. 64 pre-scale의 주기
+				1/16M x 64 = 4 x 10^-6 = 4us
+		(3) Interrupt 마스크 레지스터
+			TIMSK : 7 = OCIE2, 6 = TOIE2, 5 = TOCIE1, 4 = OCIE1A, 3 = OCIE1B, 2 = TOIE1, 1 = OCIE0, 0 = TOIE0
+			
+			- TOIE0 : 카운트 Overflow Interrupt 활성화
+			- OCIE0 : 출력 Compare Interrupt 활성화
+		(4) 전역 Interrupt 활성화
+			1] 함수 호출 way : sei();
+			2] 레지스터 way : SREG |= I<<1;
+		(5) Interrupt 벡터
+			1] Overflow Vector
+				ISR(TIMER0_OVF_vect){
+					~~~
+				}
+			
+			2] Compare Vector
+				ISR(TIMER0_COMP_vect){
+					~~~
+				}
+	뒷부분은 대면 강의시간에 안함. 뒷부분도 해야되나? ♣♣♣
+	+a)
+		1) 상태도
+			(1) 개념
+				- 시스템 상태 표현 by 유한개 상태 + 상태 천이
+			(2) 구조
+				- 강의자료 참조
+			(3) 예시
+				1] 닭의 일생
+				2] 세탁기
+				3] 유료 입장 게이트
+				4] 엘레베이터
+			
 
 ● Practice Basic
 	1. LED
@@ -530,4 +673,49 @@
 			(2) 마스크 이용
 		3) 다양한 정수형 선언 : #include <stdin.h>
 			- uint32_t 등 사용 가능
+	5. DC모터
+		1) DC모터
+			(1) 종류
+				1] DC모터
+					- 저렴
+					- 수명 문제
+					- 완구, 저가 기기
+				2] RC서보
+					- 제어 easy
+					- 수명 문제
+					- 무선조종장치, 취미로봇, 간이장치
+				3] Step모터
+					- 속도, 위치제어 easy
+					- 긴 수명
+					- Holding 토크 큼. 탈조 문제
+					- 사무정보기기, 산업용 장비
+				4] AC모터
+					- 간단, 튼튼
+					- 속도 제어 hard
+				5] 서보모터
+					- 고가
+					- 초정밀
+					- 산업용 장비, 로봇
+			(2) 원리
+				1] DC모터
+					영구자석, 회전자의 코일에 의한 인력, 반발력 -> 회전
+					회전자의 코일에 브러쉬, 정류자에 의해 서로 다른 극성 전기 공급
+				3] step모터
+					회전자 : 이가 나있는 금속휠 or 영구자석
+					고정자 : 여러 조의 코일
+					자기력선이 가장 잘 통과하기 위해 회전자 회전
+				6] 모터 드라이버
+					[1] H-bridge
+						모터 속도, 회전방향 제어를 위해 4개 스위치로 구성
+						스위치 대신 반도체인 트랜지스터 or MOSFET 4개로 구성
+			(3) 실습용 모터드라이버
+				1] H-bridge 칩 - LB1630
+					- DC모터 1개 제어
+					- H-bridge 1개 내장
+					- 8핀 DIP 패키지
+					- 2.5~6V 범위 모터 전원
+					
+		아직 덜함
+						
+				
 */

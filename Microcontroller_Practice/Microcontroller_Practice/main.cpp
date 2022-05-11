@@ -694,3 +694,311 @@ int main(){
 	}
 }
 */
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//● GPIO - Interrupt
+	//2. Interrupt 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// button led 반전 - polling
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include <avr/io.h>
+#define F_CPU 16000000UL
+#include <util/delay.h>
+
+int main(){
+	DDRA = 0x01; DDRD = 0x00; PORTD = 0x01;		// 풀업 선언 ♣♣♣
+	while(1){
+		do{
+		}while((PIND & 0x01) != 0x00);
+		PORTA = PORTA ^ 0x01;					// XOR 반전 ♣
+		_delay_ms(50);
+	}
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// button led 반전 - 외부 interrupt
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include <avr/io.h>
+#define F_CPU 16000000UL
+#include <util/delay.h>
+#include <avr/interrupt.h>						// interrupt 헤더파일 불러오기 ♣
+
+ISR(INT0_vect){
+	PORTA = PORTA ^ 0x01;
+}
+
+int main(){
+	DDRA = 0x0f;
+	DDRD = 0x00;
+	EICRA |= (1<<ISC01);	// 하강 에지 ♣
+	EIMSK |= (1<<INT0);		// 인터럽트 활성화 ♣
+	sei();					// 전역 인터럽트 활성화 ♣
+	while(1);
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// button 누를때만 led 켜지기 - 외부 interrupt
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*	// 이거 왜 안됨??? ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#define USE_IE0_INTERRUPT (EIMSK |= (1<<INT0))					// 이렇게 해도 된다 ♣♣
+#define IE0_DETECT_FALLING (EICRA = (1<<ISC01))					// 10 : 하강에지 ♣
+#define IE0_DETECT_RISING (EICRA = (1<<ISC01) | (1<<ISC00))		// 11 : 상승에지 ♣
+
+ISR(INT0_vect){
+	PORTA = PORTA ^ 0x01;
+	if((EICRA & (1<<ISC00)) == 0){	// FALLING인 경우 RISING으로 바꿈. 누른 상태에서는 반전되서 켜짐 ♣
+		IE0_DETECT_RISING;
+	}
+	else{							// RISING인 경우 FALLING으로 바꿈. 뗀 상태에서는 다시 반전되서 꺼짐 ♣
+		IE0_DETECT_FALLING;	
+	}
+}
+
+int main(){
+	DDRA = 0x0f;
+	DDRD = 0x00;
+	IE0_DETECT_FALLING;		// 하강 에지
+	USE_IE0_INTERRUPT;		// 인터럽트 활성화
+	sei();					// 전역 인터럽트 활성화
+	while(1);
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//● GPIO - PWM
+	//2. PWM 실습
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// 1/100초 타이머
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include <avr/io.h>
+#include <avr/interrupt.h>
+void disp_digit(unsigned char, unsigned char);
+unsigned char digit[10] = {0x88, 0xBE, 0xC4, 0xA4, 0xB2, 0xA1, 0x83, 0xBC, 0x80, 0xB0};
+volatile unsigned int count=0;
+ISR(TIMER0_OVF_vect) {
+	count++;
+	TCNT0=6;
+}
+
+int main() {
+	unsigned char num;
+	DDRC = 0xff;
+	DDRG = 0x0f;
+	TCCR0 |= 1<<CS02;			// Prescale 64 -> 4us ♣
+	TIMSK |= 1<<TOIE0;			// Count Overflow Interrupt Enable ♣
+	TCNT0=6;					// 4us x (256 - 6) = 1ms ♣♣
+	sei();
+	
+	while (1){
+		if ((count % 10)==0){	//1자리
+			num= (count/10)%10;
+			disp_digit(num, 0);
+		}
+		if ((count % 10)==2){	//10자리
+			num= (count/100)%10;
+			disp_digit(num, 1);
+		}
+		if ((count % 10)==5){	//100자리
+			num= (count/1000)%10;
+			disp_digit(num, 2);
+		}
+		if ((count % 10)==8){ //1000자리
+			num= (count/10000)%10;
+			disp_digit(num, 3);
+		}
+	}
+}
+
+void disp_digit(unsigned char num, unsigned char d) {
+	PORTC = digit[num];
+	PORTG = 0x01<<d;
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// 타이머에 따른 LED PWM 조절
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include <avr/io.h>
+#define F_CPU 16000000UL
+#include <util/delay.h>
+#define TC0_FAST_PWM (1<<WGM00 | 1<<WGM01)
+#define TC0_NONIVERT_PWM (1<<COM01)
+#define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)
+void disp_FND(unsigned char num);
+void initialize(void);
+void disp_digit(unsigned char num, unsigned char d);
+unsigned char digit[10] = {0x88, 0XBE, 0xC4, 0xA4, 0xB2, 0xA1, 0x83, 0xBC, 0x80, 0xB0};
+	
+int main(void) {
+	unsigned int count=0;
+	unsigned char duty;
+	initialize();
+	while (1){
+		duty=count % 256;
+		OCR0=duty;
+		count++;
+		disp_FND(duty);
+	}
+}
+
+void disp_FND(unsigned char num){
+	unsigned char fnd[4];
+	fnd[3] = (num/1000)%10;
+	fnd[2] = (num/100)%10;
+	fnd[1] = (num/10)%10;
+	fnd[0] = num%10;
+	for (int i=0; i<4; i++){
+		disp_digit(fnd[i],i);
+		_delay_ms(2);
+		if(i%2) _delay_ms(1);
+	}
+}
+
+void disp_digit(unsigned char num, unsigned char d){
+	PORTC = digit[num];
+	PORTF = 1<<d;
+}
+void initialize(){
+	DDRB=0x10; // DDRB |=1<<PORTB4
+	DDRC=0xFF;
+	DDRF=0x0F;
+	TCCR0 |= TC0_FAST_PWM | TC0_NONIVERT_PWM | TC0_PRESCALE_32;
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// button 누를때 서보모터 움직임
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include <avr/io.h>
+#define BOT (PIND & 0x01)
+#define TC0_FAST_PWM (1<<WGM00 | 1<<WGM01) // 고속 PWM 모드
+#define TC0_NONIVERT_PWM (1<<COM01) // 비교 출력 모드
+#define TC0_PRESCALE_1024 (1<<CS00| 1<<CS01 | 1<<CS02) // 프리스케일 모드
+unsigned int prev_BOT=1, count=0;
+int main(void) {
+	DDRB=0x10; // 서보모터
+	DDRD=0x00; // 버튼
+	PORTD |= 1<<PORTD0; // Pull up
+	OCR0=23; count=23; // 서보모터
+	TCCR0 |= TC0_FAST_PWM | TC0_NONIVERT_PWM | TC0_PRESCALE_1024; // 제어 레지스터
+	
+	while(1) {
+		// 서보모터 제어
+		if ((BOT==0) && (prev_BOT ==1)){
+			count=count+2;
+			count=(count<39) ? count: 9;
+			OCR0=count;
+		}
+		prev_BOT=BOT;
+	}
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// DC모터 움직임 - sin파
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include <avr/io.h>
+#define F_CPU 16000000UL
+#include <util/delay.h>
+#include <math.h>
+#define IN1 PB7
+// (IN1 IN2) = (H L)-->CW, (IN1 IN2)= (L H)--> CCW
+#define IN2 PB4 //(IN1 IN2)= (H H) or (L L)--> STOP
+#define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)
+#define TC0_FAST_PWM (1<<WGM00| 1<<WGM01)
+#define TC0_NONINVERT_PWM (1<<COM01)
+void initial ();
+
+int main(void) {
+	int count=0;
+	double speed, t;
+	unsigned char vel;
+	initial ();
+	while(1){
+		t=(double)count/180.*3.141592;
+		speed=255*sin(t);
+		vel=(unsigned int)fabs(speed);
+		if (speed>=0){
+			PORTB|=(1<<IN1);
+			OCR0=255-vel;
+		}
+		else{
+			PORTB &=~(1<<IN1);
+			OCR0=vel;
+		}
+		count++;
+		_delay_ms(20);
+	}
+}
+void initial (){
+	DDRB=0x90;
+	TCCR0 |= TC0_FAST_PWM | TC0_NONINVERT_PWM
+	| TC0_PRESCALE_32; //PRESCALE 32
+}
+*/
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// DC모터 움직임 - 버튼에 따른 state 변화 // 이거 교수님도 안된대 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/*
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#define IN1 PB7
+// (IN1 IN2) = (H L)-->CW, (IN1 IN2)= (L H)--> CCW
+#define IN2 PB4 //(IN1 IN2)= (H H) or (L L)--> STOP
+#define Use_IE0_Interrupt (EIMSK |= (1<<INT0))
+#define IE0_Detect_Falling (EICRA = (1<<ISC01))
+#define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)
+#define TC0_FAST_PWM (1<<WGM00| 1<<WGM01)
+#define TC0_NONINVERT_PWM (1<<COM01)
+void initial ();
+unsigned char vel;
+enum {STOP, CW,STOP2, CCW} mode ;
+
+ISR(INT0_vect) {
+	if (mode==STOP) mode=CW;
+	if (mode==CW) mode=STOP2;
+	if (mode==STOP2) mode=CCW;
+if (mode==CCW) mode=STOP;}
+int main(void) {
+	mode=STOP;
+	initial ();
+	vel=100;
+	while(1){
+		switch (mode){
+			case STOP:
+			case STOP2:
+				PORTB &=~(1<<IN1);
+				OCR0=0;
+				break;
+			case CW:
+				PORTB|=(1<<IN1);
+				vel=0.3*255; //70%
+				OCR0=255-vel;
+				break;
+			case CCW:
+				PORTB &=~(1<<IN1);
+				vel=0.4*255; //40%
+				OCR0=vel;
+				break;
+			}}}
+			
+void initial (){
+	DDRB=0xff; DDRD=0x00; PORTD|=0x01;
+	OCR0=0;
+	TCCR0 |= TC0_FAST_PWM | TC0_NONINVERT_PWM
+	| TC0_PRESCALE_32; //PRESCALE 32
+	EICRA |= IE0_Detect_Falling; // Falling Edge
+	EIMSK |= (1<<INT0); // Use Interrupt
+	sei();
+}
+*/
+
