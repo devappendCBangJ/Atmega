@@ -874,21 +874,21 @@ void initialize(){
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-// button 누를때 서보모터 움직임
+// Button 누를때 서보모터 움직임
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 /*
 #include <avr/io.h>
 #define BOT (PIND & 0x01)
-#define TC0_FAST_PWM (1<<WGM00 | 1<<WGM01) // 고속 PWM 모드
-#define TC0_NONIVERT_PWM (1<<COM01) // 비교 출력 모드
-#define TC0_PRESCALE_1024 (1<<CS00| 1<<CS01 | 1<<CS02) // 프리스케일 모드
+#define TC0_FAST_PWM (1<<WGM00 | 1<<WGM01)				// 웨이브 제너레이션 모드 : 고속 PWM 모드 ♣
+#define TC0_NONIVERT_PWM (1<<COM01)						// 비교 출력 모드 of 고속 PWM 모드 : OC0핀을 BOTTOM에서 셋 / TCNT0 == OCR0면 클리어 ♣
+#define TC0_PRESCALE_1024 (1<<CS00| 1<<CS01 | 1<<CS02)	// pre-scale : 32비트 ♣
 unsigned int prev_BOT=1, count=0;
 int main(void) {
 	DDRB=0x10; // 서보모터
 	DDRD=0x00; // 버튼
-	PORTD |= 1<<PORTD0; // Pull up
-	OCR0=23; count=23; // 서보모터
-	TCCR0 |= TC0_FAST_PWM | TC0_NONIVERT_PWM | TC0_PRESCALE_1024; // 제어 레지스터
+	PORTD |= 1<<PORTD0;									// Pull up ♣
+	OCR0=23; count=23;									// 16MHz 주기 : 1/(16x10^6) // pre-scale 1024 주기 : 64us // 1500us / 64us = 23.43 ♣
+	TCCR0 |= TC0_FAST_PWM | TC0_NONIVERT_PWM | TC0_PRESCALE_1024;	// 제어 레지스터 ♣
 	
 	while(1) {
 		// 서보모터 제어
@@ -909,39 +909,39 @@ int main(void) {
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #include <math.h>
-#define IN1 PB7
-// (IN1 IN2) = (H L)-->CW, (IN1 IN2)= (L H)--> CCW
+
+#define IN1 PB7 // (IN1 IN2) = (H L)-->CW, (IN1 IN2)= (L H)--> CCW
 #define IN2 PB4 //(IN1 IN2)= (H H) or (L L)--> STOP
-#define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)
-#define TC0_FAST_PWM (1<<WGM00| 1<<WGM01)
-#define TC0_NONINVERT_PWM (1<<COM01)
+#define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)				// pre-scale : 32비트(255x32/(16x10^-6) = 512us = 2kHz) ♣
+#define TC0_FAST_PWM (1<<WGM00| 1<<WGM01)				// 웨이브 제너레이션 모드 : 고속 PWM 모드 ♣
+#define TC0_NONINVERT_PWM (1<<COM01)					// 비교 출력 모드 of 고속 PWM 모드 : OC0핀을 BOTTOM에서 셋 / TCNT0 == OCR0면 클리어 ♣
+
 void initial ();
 
 int main(void) {
 	int count=0;
 	double speed, t;
 	unsigned char vel;
-	initial ();
+	initial();
 	while(1){
 		t=(double)count/180.*3.141592;
 		speed=255*sin(t);
-		vel=(unsigned int)fabs(speed);
-		if (speed>=0){
+		vel=(unsigned int)fabs(speed);		// 절대값
+		if (speed>=0){						// speed가 + : 정회전 ♣
 			PORTB|=(1<<IN1);
-			OCR0=255-vel;
+			OCR0=255-vel;					// ??? ♣♣
 		}
-		else{
+		else{								// speed가 - : 역회전 ♣
 			PORTB &=~(1<<IN1);
-			OCR0=vel;
+			OCR0=vel;						// ??? ♣♣
 		}
-		count++;
+		count++;							// 1도씩 증가
 		_delay_ms(20);
 	}
 }
 void initial (){
 	DDRB=0x90;
-	TCCR0 |= TC0_FAST_PWM | TC0_NONINVERT_PWM
-	| TC0_PRESCALE_32; //PRESCALE 32
+	TCCR0 |= TC0_FAST_PWM | TC0_NONINVERT_PWM | TC0_PRESCALE_32; //PRESCALE 32
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -1000,4 +1000,4 @@ void initial (){
 	sei();
 }
 */
-
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
