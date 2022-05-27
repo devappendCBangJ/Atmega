@@ -778,9 +778,11 @@ int main(){
 /*
 #include <avr/io.h>
 #include <avr/interrupt.h>
+
 void disp_digit(unsigned char, unsigned char);
 unsigned char digit[10] = {0x88, 0xBE, 0xC4, 0xA4, 0xB2, 0xA1, 0x83, 0xBC, 0x80, 0xB0};
 volatile unsigned int count=0;
+
 ISR(TIMER0_OVF_vect) {
 	count++;
 	TCNT0=6;
@@ -827,6 +829,7 @@ void disp_digit(unsigned char num, unsigned char d) {
 #include <avr/io.h>
 #define F_CPU 16000000UL
 #include <util/delay.h>
+
 #define TC0_FAST_PWM (1<<WGM00 | 1<<WGM01)		// 웨이브 제너레이션 모드 : 고속 PWM 모드 ♣
 #define TC0_NONIVERT_PWM (1<<COM01)				// 비교 출력 모드 of 고속 PWM 모드 : OC0핀을 BOTTOM에서 셋 / TCNT0 == OCR0면 클리어 ♣
 #define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)		// pre-scale : 32비트 ♣
@@ -834,7 +837,6 @@ void disp_digit(unsigned char num, unsigned char d) {
 void disp_FND(unsigned char num);
 void initialize(void);
 void disp_digit(unsigned char num, unsigned char d);
-
 unsigned char digit[10] = {0x88, 0XBE, 0xC4, 0xA4, 0xB2, 0xA1, 0x83, 0xBC, 0x80, 0xB0};
 	
 int main(void) {
@@ -879,10 +881,13 @@ void initialize(){
 /*
 #include <avr/io.h>
 #define BOT (PIND & 0x01)
+
 #define TC0_FAST_PWM (1<<WGM00 | 1<<WGM01)				// 웨이브 제너레이션 모드 : 고속 PWM 모드 ♣
 #define TC0_NONIVERT_PWM (1<<COM01)						// 비교 출력 모드 of 고속 PWM 모드 : OC0핀을 BOTTOM에서 셋 / TCNT0 == OCR0면 클리어 ♣
 #define TC0_PRESCALE_1024 (1<<CS00| 1<<CS01 | 1<<CS02)	// pre-scale : 32비트 ♣
+
 unsigned int prev_BOT=1, count=0;
+
 int main(void) {
 	DDRB=0x10; // 서보모터
 	DDRD=0x00; // 버튼
@@ -910,8 +915,8 @@ int main(void) {
 #include <util/delay.h>
 #include <math.h>
 
-#define IN1 PB7 // (IN1 IN2) = (H L)-->CW, (IN1 IN2)= (L H)--> CCW
-#define IN2 PB4 //(IN1 IN2)= (H H) or (L L)--> STOP
+#define IN1 PB7 // (IN1 IN2) = (H L) ->CW, (IN1 IN2)= (L H) -> CCW
+#define IN2 PB4 //(IN1 IN2)= (H H) or (L L) -> STOP
 #define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)				// pre-scale : 32비트(255x32/(16x10^-6) = 512us = 2kHz) ♣
 #define TC0_FAST_PWM (1<<WGM00| 1<<WGM01)				// 웨이브 제너레이션 모드 : 고속 PWM 모드 ♣
 #define TC0_NONINVERT_PWM (1<<COM01)					// 비교 출력 모드 of 고속 PWM 모드 : OC0핀을 BOTTOM에서 셋 / TCNT0 == OCR0면 클리어 ♣
@@ -945,59 +950,121 @@ void initial (){
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-// DC모터 움직임 - 버튼에 따른 state 변화 // 이거 교수님도 안된대 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+// DC모터 움직임 - 버튼에 따른 state 변화
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-/*
+/* // 이거 교수님도 안된대 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#define IN1 PB7
-// (IN1 IN2) = (H L)-->CW, (IN1 IN2)= (L H)--> CCW
-#define IN2 PB4 //(IN1 IN2)= (H H) or (L L)--> STOP
-#define Use_IE0_Interrupt (EIMSK |= (1<<INT0))
-#define IE0_Detect_Falling (EICRA = (1<<ISC01))
-#define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)
-#define TC0_FAST_PWM (1<<WGM00| 1<<WGM01)
-#define TC0_NONINVERT_PWM (1<<COM01)
-void initial ();
+#define IN1 PB7 // (IN1 IN2) = (H L) ->CW, (IN1 IN2)= (L H) -> CCW
+#define IN2 PB4 // (IN1 IN2)= (H H) or (L L) -> STOP
+
+#define Use_IE0_Interrupt (EIMSK |= (1<<INT0))			// IE0핀 인터럽트 사용
+#define IE0_Detect_Falling (EICRA = (1<<ISC01))			// 하강 에지
+
+#define TC0_PRESCALE_32 (1<<CS00 | 1<<CS01)				// pre-scale : 32비트(255x32/(16x10^-6) = 512us = 2kHz) ♣
+#define TC0_FAST_PWM (1<<WGM00 | 1<<WGM01)				// 웨이브 제너레이션 모드 : 고속 PWM 모드 ♣
+#define TC0_NONINVERT_PWM (1<<COM01)					// 비교 출력 모드 of 고속 PWM 모드 : OC0핀을 BOTTOM에서 셋 / TCNT0 == OCR0면 클리어 ♣
+
+void initial();
 unsigned char vel;
+
+// mode 정의
 enum {STOP, CW,STOP2, CCW} mode ;
 
+// Button 인터럽트
 ISR(INT0_vect) {
 	if (mode==STOP) mode=CW;
 	if (mode==CW) mode=STOP2;
 	if (mode==STOP2) mode=CCW;
-if (mode==CCW) mode=STOP;}
+	if (mode==CCW) mode=STOP;
+}
+
 int main(void) {
 	mode=STOP;
-	initial ();
+	initial();
 	vel=100;
+	
 	while(1){
 		switch (mode){
-			case STOP:
+			case STOP:	// 정지
 			case STOP2:
-				PORTB &=~(1<<IN1);
-				OCR0=0;
+				PORTB &= ~(1<<IN1);	// IN1핀 low
+				PORTB &= ~(1<<IN2); // IN2핀 low		// 코드 보니까 이거 추가하면 될듯??? ♣♣
+				OCR0=0;				// 0에 도달 시, clear
 				break;
-			case CW:
-				PORTB|=(1<<IN1);
-				vel=0.3*255; //70%
-				OCR0=255-vel;
+			case CW:	// 정방향
+				PORTB |= (1<<IN1);	// IN1핀 high
+				PORTB &= ~(1<<IN2); // IN2핀 low		// 코드 보니까 이거 추가하면 될듯??? ♣♣
+				vel=0.3*255;		// PWM 70%
+				OCR0=255-vel;		// ??? ♣♣
 				break;
-			case CCW:
-				PORTB &=~(1<<IN1);
-				vel=0.4*255; //40%
-				OCR0=vel;
+			case CCW:	// 역방향
+				PORTB &= ~(1<<IN1);	// IN1핀 low
+				PORTB |= (1<<IN2);	// IN2핀 high	// 코드 보니까 이거 추가하면 될듯??? ♣♣
+				vel=0.4*255;		// PWM 40%
+				OCR0=vel;			// ??? ♣♣
 				break;
-			}}}
+		}
+	}
+}
 			
 void initial (){
-	DDRB=0xff; DDRD=0x00; PORTD|=0x01;
-	OCR0=0;
-	TCCR0 |= TC0_FAST_PWM | TC0_NONINVERT_PWM
-	| TC0_PRESCALE_32; //PRESCALE 32
-	EICRA |= IE0_Detect_Falling; // Falling Edge
-	EIMSK |= (1<<INT0); // Use Interrupt
-	sei();
+	DDRB = 0xff;
+	DDRD = 0x00;
+	PORTD |= 0x01;
+	
+	// PWM
+	OCR0 = 0;
+	TCCR0 |= TC0_FAST_PWM | TC0_NONINVERT_PWM | TC0_PRESCALE_32;	// pre-scale 32
+	
+	// 인터럽트
+	EICRA |= IE0_Detect_Falling;									// 하강 에지
+	EIMSK |= (1<<INT0);												// 인터럽트 활성화
+	sei();															// 전역 인터럽트 활성화
 }
 */
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+// 다중파일 이용 프로그래밍
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+/* // 이거 안해봄 ♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include "myDefinition.h"
+
+// 모터 속도용 버튼 인터럽트
+ISR(INT4_vect) {
+	if ((curCount-prevCount)>100){
+		vel+=10;
+		prevCount=curCount;
+	}
+}
+
+// 디스플레이용 타이머 인터럽트
+ISR(TIMER2_COMP_vect) {
+	PORTA^=0x01;
+	count++;
+	curCount++;
+}
+
+int main(void) {
+	mode=CCW;
+	initial();
+	vel=0;
+	
+	while(1){
+		disp_FND(vel, count);
+		switch (mode){
+			case STOP:
+			case STOP2:
+				runMotor(-1, 0);
+				break;
+			case CW:
+				runMotor(1, vel);
+				break;
+			case CCW:
+				runMotor(-1, vel);
+				break;
+		}
+	}
+}
+*/
