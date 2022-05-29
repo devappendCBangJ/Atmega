@@ -727,7 +727,7 @@
 				3] 활용 : 사무정보기기, 산업용 장비
 			(4) AC모터
 				1] 장점 : 간단, 튼튼
-				2] 단점 : 속도 제어 hard -> 인버터 사용
+				2] 단점 : 속도 제어 hard -> 인버터 사용 ♣
 				3] 활용 : 가전, 공업, 공구
 			(5) 서보모터
 				1] 장점 : 초정밀
@@ -760,9 +760,9 @@
 							IN2 : 속도(PWM)핀
 							
 							IN1 IN2 OUT1 OUT2  결과
-							 H	 L	 H	  L	  정회전(역상 PWM : PWM on-duty값에 속도 반비례) ♣
+							 H	 L	 H	  L	  정회전(역상 PWM : PWM on-duty값에 속도 반비례) ♣♣
 							 H	 H	OFF  OFF   대기
-							 L	 H	 L	  H	  역회전(정상 PWM : PWM on-duty값에 속도 비례) ♣
+							 L	 H	 L	  H	  역회전(정상 PWM : PWM on-duty값에 속도 비례) ♣♣
 							 L	 L	OFF  OFF   대기
 					[2] L9110 칩
 						1]] 진리표
@@ -770,9 +770,9 @@
 							INB : 속도(PWM)핀
 							
 							INA INB OUTA OUTB  결과
-							 H	 L	 H	  L	  정회전(역상 PWM : PWM on-duty값에 속도 반비례) ♣
+							 H	 L	 H	  L	  정회전(역상 PWM : PWM on-duty값에 속도 반비례) ♣♣
 							 H	 H	OFF  OFF   대기
-							 L	 H	 L	  H  역회전(정상 PWM : PWM on-duty값에 속도 비례) ♣
+							 L	 H	 L	  H  역회전(정상 PWM : PWM on-duty값에 속도 비례) ♣♣
 							 L	 L	OFF  OFF   대기
 		4) 시상수(Time Constant)
 			(1) 개념
@@ -791,7 +791,7 @@
 				- 선언되지 않은 변수, 상수, 함수 없도록 주의
 			(3) 사용 방법
 				1] 파일 추가
-					솔루션 탐색기 - 오렌지색 프로젝트 아이콘 우클릭 - Add - New Item - C file or Include file 선택 - 솔루션 탐색기에서 확인
+					솔루션 탐색기 - 오렌지색 프로젝트 아이콘 우클릭 - Add - New Item - C file(C언어 파일) or Include file(header 파일) 선택 - 솔루션 탐색기에서 확인
 		// 뒷부분은 대면 강의 시간에 대충 넘어감. 뒷부분도 시간남으면 하자! ♣♣♣
 						
 				
