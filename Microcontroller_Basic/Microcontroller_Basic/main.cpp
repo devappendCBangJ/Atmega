@@ -45,7 +45,7 @@
 						1]] 운영체제(OS) ♣♣♣
 							[[1]] 특징 ♣♣♣
 								1 큰 임베디드시스템 처리
-									- 순차적 처리 < 동시 처리
+									- 순차적 처리 < 동시 처리 ♣♣♣
 								2 다양한 인터페이스
 									ex. Wifi, Bluetooth, USB, SD Card
 								3 멀티미디어 지원
@@ -55,10 +55,10 @@
 									- Linux ♣♣♣
 										장점
 											기능성, 확장성 우수
-											다양한 CPU Platform 지원 : PowerPC, ARM, MIPS...
+											다양한 CPU Platform 지원 : PowerPC, ARM, MIPS... ♣♣♣
 											가격경쟁력 우수(로열티가 없기 때문)
 											넓은 사용자 층 >> 오류수정 쉬움, 안정성 우수
-											데스크탑 개발 환경과 동일
+											데스크탑 개발 환경과 동일 ♣♣♣
 										단점
 											개발환경 Text >> 개발 어려움
 											Real-Time 지원x(범용 OS로 설계하기 때문)
@@ -325,7 +325,7 @@
 		3] 저항 : 전기 흐름 방해 ♣♣♣
 		  [1] 특징
 			- 저항 크기 : 가늘고 길다 > 굵고 짧다
-			- 저항 원리 : 전자 >> 도체 지나감 >> 자유 전자의 방해 >> 도체 통과하는 전자 수 감소 >> 열 발생 >> 에너지 손실 ♣♣♣
+			- 저항 원리 : 전자 -> 도체 지나감 -> 자유 전자의 방해 -> 도체 통과하는 전자 수 감소 -> 열 발생 -> 에너지 손실 ♣♣♣
 			- 저항 재료 : 금속선 or 탄소 피막 (칼라 코드 표시 for 직관성, 식별성) ♣♣♣
 			  검 갈 빨 주 노 초 파 보 회 흰 ♣♣♣
 			  0 1 2 3 4 5 6 7 8 9
@@ -377,15 +377,15 @@
 			(1) 특징
 				- USB-to-Serial 변환 칩(CP2102)용 USB 드라이버
 	
-		1) USB to Serial Driver 설치 : http://silabs.com >> CP210x VCP Windows 검색 >> 다운
-		2) 디바이스 연결 확인 : 장치 관리자 >> COM 포트
+		1) USB to Serial Driver 설치 : http://silabs.com -> CP210x VCP Windows 검색 -> 다운
+		2) 디바이스 연결 확인 : 장치 관리자 -> COM 포트
 		3) Ateml Studio 사용
-			1] 프로젝트 생성 : 상단 File >> New Project >> C/C++ GCC C Executable project >> 파일명 입력 >> Device Selection >> MCU : ATmega128A 선택
+			1] 프로젝트 생성 : 상단 File -> New Project -> C/C++ GCC C Executable project -> 파일명 입력 -> Device Selection -> MCU : ATmega128A 선택
 			3] 코드 작성
 			4] 솔루션 빌드 : F7
-			5] target 설정 : 상단 Tools >> Add Target >> Tool : STK500, Serial Port : 해당COM
-			6] Device Programming : 상단 Tools >> Device Programming >> SKT500, ATmega128A, ISP >> Apply 클릭
-				>> Memories >> Flash 설정 >> Program 클릭
+			5] target 설정 : 상단 Tools -> Add Target -> Tool : STK500, Serial Port : 해당COM
+			6] Device Programming : 상단 Tools -> Device Programming -> SKT500, ATmega128A, ISP -> Apply 클릭
+				-> Memories -> Flash 설정 -> Program 클릭
 	
 
 ● Interrupt & Polling ♣♣
@@ -569,7 +569,7 @@
 			(1) I/O 포트가 Source
 				MCU : Port에서 5V가 High 출력 -> LED -> 저항 -> Ext : GND
 			(2) I/O 포트가 Sink
-				Ext : 5V >> 저항 >> LED >> Port에서 GND가 Low 받음
+				Ext : 5V -> 저항 -> LED -> Port에서 GND가 Low 받음
 		2) 레지스터 : MCU 입출력 기능 사용
 			(1) AVR 레지스터 상수, 이름 정의 헤더파일 불러오기
 				#include <avr/io.h>
@@ -595,14 +595,14 @@
 		1) 회로
 			(1) 외부 회로 ♣
 				1] PullUp
-					- default : 5V >> 저항 >> AVR pin
-					- 연결 시 : 5V >> 저항 >> AVR pin
-										  >> switch >> GND
+					- default : 5V -> 저항 -> AVR pin
+					- 연결 시 : 5V -> 저항 -> AVR pin
+										  -> switch -> GND
 					- 기본 입력 : 1
 				2] PullDown
-					- default : AVR pin >> 저항 >> GND
-					- 연결 시 : 5V >> switch >> AVR pin
-											 >> 저항 >> GND
+					- default : AVR pin -> 저항 -> GND
+					- 연결 시 : 5V -> switch -> AVR pin
+											 -> 저항 -> GND
 					- 기본 입력 : 0
 			(2) AVR 내부 회로
 				- AVR칩 내부 제공 PullUp/PullDown 회로
@@ -610,14 +610,14 @@
 					PullUp : 해당 핀을 input 설정 + high 출력 ♣♣♣
 					PullDown : 해당 핀을 input 설정 + low 출력 ♣♣♣
 				1] PullUp
-					- default : 5V >> 저항 >> AVR pin
-					- 연결 시 : 5V >> 저항 >> AVR pin
-										  >> switch >> GND
+					- default : 5V -> 저항 -> AVR pin
+					- 연결 시 : 5V -> 저항 -> AVR pin
+										  -> switch >> GND
 					- 기본 입력 : 1
 				2] PullDown
-					- default : AVR pin >> 저항 >> GND
-					- 연결 시 : 5V >> switch >> AVR pin
-											 >> 저항 >> GND  
+					- default : AVR pin -> 저항 -> GND
+					- 연결 시 : 5V -> switch -> AVR pin
+											 -> 저항 -> GND  
 					- 기본 입력 : 0
 		2) 구조
 			(1) 연결 구조 ♣♣♣
@@ -645,10 +645,10 @@
 			(3) 큰 스피커 : 트랜지스터 연결
 				1] 정논리 회로
 					5V -> 스피커 -> npn TR -> GND
-					포트 -> 1kΩ ->
+					포트 -> 1kΩ -> npn TR
 				2] 부논리 회로
 					5V -> pnp TR -> 스피커 -> GND
-					포트 -> 1kΩ ->
+					포트 -> 1kΩ -> pnp TR
 		3) 사용
 			- 음계의 주파수 확인
 	4. FND 디스플레이(7segment)
@@ -674,11 +674,11 @@
 		2) 회로 구성
 			(1) 자리수선택 4핀 : NPN 트랜지스터 연결 ♣♣♣
 				1] 공통 캐소드(음극 공통)
-					FND 데이터핀 >> 200Ω >> npn TR >> GND
-					포트 >> 1kΩ >> npn TR
+					FND 데이터핀 -> 200Ω -> npn TR -> GND
+					포트 -> 1kΩ -> npn TR
 				2] 공통 애노드(양극 공통)
-					5V >> npn TR >> 200Ω >> FND 데이터핀
-					포트 >> 1kΩ >> npn TR
+					5V -> npn TR -> 200Ω -> FND 데이터핀
+					포트 -> 1kΩ -> npn TR
 		3) 사용
 			- FND의 datasheet 확인
 			- FND에 캐소드, 애노드 타입 적혀있음
