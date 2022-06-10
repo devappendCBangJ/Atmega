@@ -470,8 +470,8 @@
 			이름 : T/C1, T/C3
 			BOTTOM ~ TOP : 0 ~ 65535
 	2) 동작 방식 ♣♣
-		(1) 동기식 : 내부클럭 -> pre-scaler -> 업카운트 -> [CVF : 타이머값 overflow] or [Comp : 타이머값 OCR(Output Compare Register) 도달] 
-		(2) 비동기식 : 외부클럭 -> 업카운트 -> [CVF : 타이머값 overflow] or [Comp : 타이머값 OCR(Output Compare Register) 도달] 
+		(1) 동기식 : 내부클럭 -> pre-scaler -> 업카운트 -> [CVF : 타이머값 overflow] or [Comp : 타이머값 OCR(Output Compare Register) 도달]
+		(2) 비동기식 : 외부클럭 -> 업카운트 -> [CVF : 타이머값 overflow] or [Comp : 타이머값 OCR(Output Compare Register) 도달]
 		
 		- OCR : pre-scaler를 거친 타이머의 주기에 맞춰 카운트. TCNT == OCR가 되면 해당되는 행동 취하고, 바로 다음 행동 시작하는 것이 아니라, 다음 주기에서 다시 행동 시작 ♣
 	3) Timer / Counter 모드 ♣♣
